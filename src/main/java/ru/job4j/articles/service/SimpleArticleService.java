@@ -32,6 +32,5 @@ public class SimpleArticleService implements ArticleService {
                 .peek(i -> LOGGER.info("Сгенерирована статья № {}", i))
                 .mapToObj((x) -> new WeakReference<Article>(articleGenerator.generate(words)))
                 .forEach(el -> articleStore.save(el.get()));
-
     }
 }

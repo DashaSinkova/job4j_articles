@@ -17,6 +17,6 @@ public class RandomArticleGenerator implements ArticleGenerator {
         var content = new WeakReference<>(words.stream()
                 .map(Word::getValue)
                 .collect(Collectors.joining(" ")));
-        return new Article(content.get());
+        return new Article(content.get().toString());
     }
 }
