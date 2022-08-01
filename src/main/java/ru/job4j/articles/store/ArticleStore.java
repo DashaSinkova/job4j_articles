@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.job4j.articles.model.Article;
 
+import java.lang.ref.WeakReference;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -54,20 +55,21 @@ public class ArticleStore implements Store<Article>, AutoCloseable {
     }
 
     @Override
-    public Article save(Article model) {
+    public Article save(Article model) {  // void?
         LOGGER.info("Сохранение статьи");
         var sql = "insert into articles(text) values(?)";
         try (var statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, model.getText());
             statement.executeUpdate();
-            var key = statement.getGeneratedKeys();
-            while (key.next()) {
-                model.setId(key.getInt(1));
+            var key = new WeakReference<>(statement.getGeneratedKeys());
+            while (key.get().next()) {
+                model.setId(key.get().getInt(1));
             }
         } catch (Exception e) {
             LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
             throw new IllegalStateException();
         }
+        System.gc();
         return model;
     }
 
