@@ -14,9 +14,9 @@ public class RandomArticleGenerator implements ArticleGenerator {
     @Override
     public Article generate(List<Word> words) {
         Collections.shuffle(words);
-        var content = new WeakReference<>(words.stream()
+        var content = words.stream()
                 .map(Word::getValue)
-                .collect(Collectors.joining(" ")));
-        return new Article(content.get().toString());
+                .collect(Collectors.joining(" "));
+        return new Article(content);
     }
 }
